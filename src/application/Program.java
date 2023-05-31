@@ -17,13 +17,15 @@ public class Program {
 		Locale.setDefault(Locale.US);
 		Scanner sc = new Scanner(System.in);
 		
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+		
 		System.out.println("Enter rental data: ");
 		System.out.print("Car model: ");
 		String carModel = sc.nextLine();
 		System.out.print("Pickup (dd/MM/yyyy HH:mm): ");
-		LocalDateTime start = LocalDateTime.parse(sc.nextLine(), DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+		LocalDateTime start = LocalDateTime.parse(sc.nextLine(), dtf);
 		System.out.print("Return (dd/MM/yyyy HH:mm): ");
-		LocalDateTime finish = LocalDateTime.parse(sc.nextLine(), DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+		LocalDateTime finish = LocalDateTime.parse(sc.nextLine(), dtf);
 	
 		CarRental cr = new CarRental(start, finish, new Vehicle(carModel));
 		
@@ -32,9 +34,15 @@ public class Program {
 		System.out.print("Enter price per day: ");
 		double pricePerDay = sc.nextDouble();
 		
-		RentalService rentalService = new RentalService(pricePerHour, pricePerDay, new BrazilTaxService());
+		RentalService rentalService = new RentalService(pricePerDay, pricePerHour, new BrazilTaxService());
 		
 		rentalService.processInvoice(cr);
+		
+		System.out.println("INVOICE: ");
+		System.out.printf("Basic payment: %.2f%n",  cr.getInvoice().getBasicPayment());
+		System.out.printf("Tax: %.2f%n", cr.getInvoice().getTax());
+		System.out.printf("Total payment: %.2f%n", cr.getInvoice().getTotalPayment());
+		
 		
 		sc.close();
 
